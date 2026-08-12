@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.env
+.env.local
+.env.*.local
+
+# Fixture data is fetched from blob storage at runtime — never commit it.
+*.TXT
+*.txt
+!SPEC.txt
+fixtures/
+data/
+
+.DS_Store
+*.log
+.vite/
