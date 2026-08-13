@@ -1,73 +1,108 @@
 # interview-claims-pipeline
 
-Setup for the technical interview. Please get this working **before** the session — we'll do a
+Starter for the technical interview. Please get this running **before** the session — we'll do a
 short check with you the day before.
 
-The task itself is explained at the start of the session. There's no code here to read.
+The task itself is explained at the start of the session. There's nothing to read here beyond setup.
 
-## What you need
+## Stack
 
-- **Any language and framework you like** — whatever you're fastest in. Node, Python, Go, Ruby,
-  anything. There's no fixed stack and nothing to install from us.
-- **A database.** SQLite is the easy choice: no install, no server. Postgres or MySQL are fine if
-  you already have one running.
-- **No Docker required.**
+TypeScript on Node for the backend, React on the frontend — the same shape we use at Gently. It's
+fine if you haven't used some of it; we're interested in how you work, not whether you've memorised
+an API. Use any AI tooling you like.
 
-You'll be starting from an empty directory, so set up your project however you normally would.
+Storage is **SQLite**, so there's no database to install and no Docker.
 
-## What we'll send you
+## Requirements
 
-1. A **SAS URL** for the data — looks like
-   `https://gentlyinterview.blob.core.windows.net/?sv=...&sig=...`
-2. Three container names: `division-a`, `division-b`, `division-c`
+- **Node 22+** (`node -v`)
+- **pnpm** (`npm i -g pnpm` if you don't have it)
 
-The SAS is read-only and expires. You can't write to or delete anything, so there's nothing you
-can break.
+That's all.
+
+## Setup
+
+```bash
+git clone https://github.com/Gently-AI/interview-claims-pipeline
+cd interview-claims-pipeline
+
+pnpm install
+cp .env.example .env.local
+```
+
+Open `.env.local` and paste the SAS URL we sent you:
+
+```bash
+AZURE_SAS_URL='https://gentlyinterview.blob.core.windows.net/?sv=...&sig=...'
+```
+
+**Keep the quotes.** Without them the shell splits on the `&` characters and the value silently
+truncates. That's the single most common setup problem here.
+
+`AZURE_SAS_URL` is the only value you need to set — everything else in `.env.example` is already
+correct.
 
 ## Check it works
 
-Paste your SAS URL between the quotes and run this. **Keep the single quotes** — without them the
-shell will eat the `&` characters and the token will silently break.
+```bash
+pnpm check
+```
+
+You want:
+
+```
+PASS  sqlite opens
+PASS  division-a — 64 files
+PASS  division-b — 61 files
+PASS  division-c — 61 files
+
+All good.
+```
+
+If anything says `FAIL`, tell us **before** the session rather than spending interview time on it.
+The usual causes are an expired SAS or the quoting problem above.
+
+## Run it
 
 ```bash
-SAS_URL='https://gentlyinterview.blob.core.windows.net/?sv=...&sig=...'
-
-BASE="${SAS_URL%%\?*}"; BASE="${BASE%/}"; QS="${SAS_URL#*\?}"
-for c in division-a division-b division-c; do
-  n=$(curl -s "$BASE/$c?restype=container&comp=list&$QS" | grep -c '<Name>')
-  [ "$n" -gt 0 ] && echo "OK    $c — $n files" || echo "FAIL  $c"
-done
+pnpm dev
 ```
 
-You want three `OK` lines:
+Runs both together:
 
-```
-OK    division-a — 64 files
-OK    division-b — 61 files
-OK    division-c — 61 files
-```
+- **API** — `http://localhost:8080`, try `http://localhost:8080/api/health`
+- **Web** — `http://localhost:3000` (Vite picks the next free port if 3000 is taken — watch the
+  startup output)
 
-If you get a `FAIL`, run this to see the actual error and send it to us:
+The frontend proxies `/api/*` to the backend, so you can `fetch("/api/whatever")` from React
+without any CORS setup.
+
+Run them separately if you prefer:
 
 ```bash
-curl -s "$BASE/division-a?restype=container&comp=list&$QS" | head -5
+pnpm dev:api     # backend only, watch mode
+pnpm dev:web     # frontend only
 ```
 
-Common causes: the token expired, or the `&` characters got split by an unquoted shell variable.
+Other scripts: `pnpm typecheck`, `pnpm build`.
 
-## Then confirm you can read a file
+## What's here
 
-```bash
-curl -s "$BASE/division-a?restype=container&comp=list&$QS" \
-  | grep -o '<Name>[^<]*</Name>' | sed 's/<[^>]*>//g' | head
+```
+src/config.ts          env parsing; containers pre-filled, builds container URLs from the SAS
+src/blob.ts            blob storage clients
+src/db.ts              SQLite connection
+src/server.ts          Express app with /api/health — add your endpoints here
+src/scripts/check.ts   what `pnpm check` runs
+web/src/App.tsx        React entry point — build your UI here
 ```
 
-That's everything. If both commands work, you're ready.
+There's no ingest, no schema and no parsing. That's the exercise.
 
 ## Notes
 
-- Use any AI tooling you like — that's expected, not tolerated.
+- Use any AI tooling you like — that's expected, not merely tolerated.
 - You won't push anywhere. Commit locally as you go; we read the commit stream while you work.
 - Please don't publish your solution afterwards — we reuse this exercise.
-- If your network blocks Azure Blob Storage, tell us before the session and we'll sort out an
-  alternative.
+- The SAS is read-only and expires, so there's nothing you can break.
+- If your network blocks Azure Blob Storage, tell us before the session.

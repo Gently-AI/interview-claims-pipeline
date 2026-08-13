@@ -1,0 +1,7 @@
+packages:
+  - .
+
+# These ship prebuilt binaries and need their install scripts to run.
+allowBuilds:
+  esbuild: true
+  better-sqlite3: true
