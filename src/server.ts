@@ -11,6 +11,17 @@ app.get("/api/health", (_req, res) => {
 
 // Your endpoints go here.
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`api  http://localhost:${PORT}`);
+});
+
+server.on("error", (error: NodeJS.ErrnoException) => {
+  if (error.code === "EADDRINUSE") {
+    console.error(
+      `\nPort ${PORT} is already in use.\n` +
+        `Set PORT to something else in .env.local, or free it with:  lsof -ti :${PORT} | xargs kill\n`,
+    );
+    process.exit(1);
+  }
+  throw error;
 });

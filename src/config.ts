@@ -17,7 +17,7 @@ const EnvSchema = z.object({
     .min(1)
     .default("division-a,division-b,division-c"),
   SQLITE_PATH: z.string().min(1).default("claims.db"),
-  PORT: z.coerce.number().int().positive().default(8080),
+  PORT: z.coerce.number().int().positive().default(8787),
 });
 
 const parsed = EnvSchema.safeParse(process.env);

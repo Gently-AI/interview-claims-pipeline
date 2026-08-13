@@ -70,12 +70,15 @@ pnpm dev
 
 Runs both together:
 
-- **API** — `http://localhost:8080`, try `http://localhost:8080/api/health`
+- **API** — `http://localhost:8787`, try `http://localhost:8787/api/health`
 - **Web** — `http://localhost:3000` (Vite picks the next free port if 3000 is taken — watch the
   startup output)
 
 The frontend proxies `/api/*` to the backend, so you can `fetch("/api/whatever")` from React
 without any CORS setup.
+
+If a port is already taken: the API will tell you and exit — set `PORT` in `.env.local` (the Vite
+proxy follows it automatically). Vite just moves to the next free port and prints where it landed.
 
 Run them separately if you prefer:
 
