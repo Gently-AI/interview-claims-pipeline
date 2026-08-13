@@ -12,10 +12,19 @@ async function main(): Promise<void> {
   console.log(dbOk ? "PASS  sqlite opens" : "FAIL  sqlite could not open");
   failed ||= !dbOk;
 
-  for (const { container, client } of getAllContainerClients()) {
+  let containers: ReturnType<typeof getAllContainerClients> = [];
+  try {
+    containers = getAllContainerClients();
+  } catch (error) {
+    console.log(`FAIL  ${(error as Error).message}`);
+    console.log("\nSomething failed — tell us before the session.");
+    process.exit(1);
+  }
+
+  for (const { container, client } of containers) {
     try {
       let n = 0;
-      for await (const _ of client.listBlobsFlat()) n++;
+      for await (const _blob of client.listBlobsFlat()) n++;
       if (n === 0) {
         console.log(`FAIL  ${container} listed but is empty`);
         failed = true;

@@ -1,5 +1,10 @@
-import "dotenv/config";
+import dotenv from "dotenv";
 import { z } from "zod";
+
+// .env.local wins; .env is a fallback. Values already in the real environment
+// are never overwritten by either.
+dotenv.config({ path: ".env.local" });
+dotenv.config();
 
 /**
  * The only value you need to set is AZURE_SAS_URL, in .env.local.

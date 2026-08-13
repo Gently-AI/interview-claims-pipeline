@@ -52,9 +52,9 @@ You want:
 
 ```
 PASS  sqlite opens
-PASS  division-a — 64 files
-PASS  division-b — 61 files
-PASS  division-c — 61 files
+PASS  division-a — 63 files
+PASS  division-b — 60 files
+PASS  division-c — 60 files
 
 All good.
 ```
