@@ -15,10 +15,41 @@ Storage is **SQLite**, so there's no database to install and no Docker.
 
 ## Requirements
 
-- **Node 22+** (`node -v`)
-- **pnpm** (`npm i -g pnpm` if you don't have it)
+**Node 22 or newer**, and **pnpm**. Nothing else — no Docker, no database to install.
 
-That's all.
+Check what you have:
+
+```bash
+node -v      # want v22.x or newer
+pnpm -v      # any recent version
+```
+
+### If Node is missing or too old
+
+Any one of these works — pick whichever you already have:
+
+| You have | Do this |
+| -------- | ------- |
+| **nvm** | `nvm install 22 && nvm use 22` — the repo has an `.nvmrc`, so `nvm use` on its own works once you're in the folder |
+| **fnm** | `fnm install 22 && fnm use 22` |
+| **Homebrew** (macOS) | `brew install node@22` |
+| **winget** (Windows) | `winget install OpenJS.NodeJS.LTS` |
+| **Nothing** | Download the LTS installer from [nodejs.org](https://nodejs.org) — it takes a couple of minutes and includes npm |
+
+Then `node -v` to confirm.
+
+### If pnpm is missing
+
+```bash
+npm i -g pnpm
+```
+
+Or, if you have Node 22+, `corepack enable` also works.
+
+The project checks your Node version before installing and before starting, so if it's wrong you'll
+get a message telling you what to do rather than a confusing build error.
+
+**Sort this out before the session, not during it.**
 
 ## Setup
 
