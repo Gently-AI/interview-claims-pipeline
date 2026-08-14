@@ -26,17 +26,60 @@ pnpm -v      # any recent version
 
 ### If Node is missing or too old
 
-Any one of these works — pick whichever you already have:
+You have two options. Either is fine.
 
-| You have | Do this |
+#### Option A — nvm (recommended)
+
+nvm lets you install and switch Node versions per project. This repo has an `.nvmrc`, so once nvm
+is installed, `nvm use` inside the folder picks the right version automatically.
+
+**macOS / Linux** — install nvm, then Node:
+
+```bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+```
+
+Then **close and reopen your terminal** (the installer appends to your shell profile — `nvm` won't
+be found until you do). Check with `command -v nvm`, then:
+
+```bash
+nvm install 22
+nvm use 22
+```
+
+**Windows** — use nvm-windows:
+
+```powershell
+winget install CoreyButler.NVMforWindows
+```
+
+Reopen your terminal, then:
+
+```powershell
+nvm install 22
+nvm use 22
+```
+
+If the install script URL 404s, grab the current one from
+[github.com/nvm-sh/nvm](https://github.com/nvm-sh/nvm) (macOS/Linux) or
+[nvm-windows releases](https://github.com/coreybutler/nvm-windows/releases).
+
+#### Option B — install Node directly
+
+Simpler if you don't need to switch versions.
+
+| Platform | Command |
 | -------- | ------- |
-| **nvm** | `nvm install 22 && nvm use 22` — the repo has an `.nvmrc`, so `nvm use` on its own works once you're in the folder |
-| **fnm** | `fnm install 22 && fnm use 22` |
-| **Homebrew** (macOS) | `brew install node@22` |
-| **winget** (Windows) | `winget install OpenJS.NodeJS.LTS` |
-| **Nothing** | Download the LTS installer from [nodejs.org](https://nodejs.org) — it takes a couple of minutes and includes npm |
+| macOS (Homebrew) | `brew install node@22` |
+| Windows (winget) | `winget install OpenJS.NodeJS.LTS` |
+| Linux (apt) | `curl -fsSL https://deb.nodesource.com/setup_22.x \| sudo -E bash - && sudo apt install -y nodejs` |
+| Anything | Download the LTS installer from [nodejs.org](https://nodejs.org) |
 
-Then `node -v` to confirm.
+#### Confirm it worked
+
+```bash
+node -v      # v22.x or newer
+```
 
 ### If pnpm is missing
 
@@ -44,10 +87,10 @@ Then `node -v` to confirm.
 npm i -g pnpm
 ```
 
-Or, if you have Node 22+, `corepack enable` also works.
+Or, on Node 22+, `corepack enable` works too.
 
-The project checks your Node version before installing and before starting, so if it's wrong you'll
-get a message telling you what to do rather than a confusing build error.
+The project checks your Node version before installing and before starting, so a wrong version
+gives you a message telling you what to do rather than a confusing build error.
 
 **Sort this out before the session, not during it.**
 
