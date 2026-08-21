@@ -172,7 +172,7 @@
       "edi_transaction_id",
       "lot_item_number"
     ],
-    "note": "Rows end with a trailing tab, so splitting on tab yields 39 fields for 38 columns. The last is always empty."
+    "note": "Sidecar records for sales order lines (AS/400 member ORDAD, 'order additional data'), keyed on order_number + back_order_level + line_number. It records which supplier and purchase order filled a line, not its price or quantity. Rows end with a trailing tab, so splitting on tab yields 39 fields for 38 columns; the last is always empty. Note claim_number here is free text (values like NSD, DNC, '=') and is not a claim reference."
   },
   "supplier_invoices": {
     "columns": [
@@ -226,7 +226,8 @@
       "status_complete",
       "status_posted",
       "accepted_first"
-    ]
+    ],
+    "note": "Invoices a supplier sent us \u2014 accounts payable, i.e. money owed out. Not to be confused with transactions_invoice_line_items, which is what we invoiced a customer."
   },
   "products": {
     "columns": [
