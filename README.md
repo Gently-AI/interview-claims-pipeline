@@ -1,167 +1,91 @@
 # interview-claims-pipeline
 
-Starter for the technical interview. Please get this running **before** the session — we'll do a
-short check with you the day before.
-
-The task itself is explained at the start of the session. There's nothing to read here beyond setup.
-
-## Stack
-
-TypeScript on Node for the backend, React on the frontend — the same shape we use at Gently. It's
-fine if you haven't used some of it; we're interested in how you work, not whether you've memorised
-an API. Use any AI tooling you like.
-
-Storage is **SQLite**, so there's no database to install and no Docker.
-
-## Requirements
-
-**Node 22 or newer**, and **pnpm**. Nothing else — no Docker, no database to install.
-
-Check what you have:
-
-```bash
-node -v      # want v22.x or newer
-pnpm -v      # any recent version
-```
-
-### If Node is missing or too old
-
-You have two options. Either is fine.
-
-#### Option A — nvm (recommended)
-
-nvm lets you install and switch Node versions per project. This repo has an `.nvmrc`, so once nvm
-is installed, `nvm use` inside the folder picks the right version automatically.
-
-**macOS / Linux** — install nvm, then Node:
-
-```bash
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
-```
-
-Then **close and reopen your terminal** (the installer appends to your shell profile — `nvm` won't
-be found until you do). Check with `command -v nvm`, then:
-
-```bash
-nvm install 22
-nvm use 22
-```
-
-**Windows** — use nvm-windows:
-
-```powershell
-winget install CoreyButler.NVMforWindows
-```
-
-Reopen your terminal, then:
-
-```powershell
-nvm install 22
-nvm use 22
-```
-
-If the install script URL 404s, grab the current one from
-[github.com/nvm-sh/nvm](https://github.com/nvm-sh/nvm) (macOS/Linux) or
-[nvm-windows releases](https://github.com/coreybutler/nvm-windows/releases).
-
-#### Option B — install Node directly
-
-Simpler if you don't need to switch versions.
-
-| Platform | Command |
-| -------- | ------- |
-| macOS (Homebrew) | `brew install node@22` |
-| Windows (winget) | `winget install OpenJS.NodeJS.LTS` |
-| Linux (apt) | `curl -fsSL https://deb.nodesource.com/setup_22.x \| sudo -E bash - && sudo apt install -y nodejs` |
-| Anything | Download the LTS installer from [nodejs.org](https://nodejs.org) |
-
-#### Confirm it worked
-
-```bash
-node -v      # v22.x or newer
-```
-
-### If pnpm is missing
-
-```bash
-npm i -g pnpm
-```
-
-Or, on Node 22+, `corepack enable` works too.
-
-The project checks your Node version before installing and before starting, so a wrong version
-gives you a message telling you what to do rather than a confusing build error.
-
-**Sort this out before the session, not during it.**
+Setup for the technical interview — a couple of minutes. The task is explained at the start of the
+session. TypeScript + Express + React + SQLite; no Docker, no database to install.
 
 ## Setup
 
 ```bash
 git clone https://github.com/Gently-AI/interview-claims-pipeline
 cd interview-claims-pipeline
-
 pnpm install
 cp .env.example .env.local
 ```
 
-Open `.env.local` and paste the SAS URL we sent you:
+Paste the SAS URL we sent you into `.env.local` — the only value you need to set. **Keep the
+quotes**, or the shell splits on the `&` and it silently truncates:
 
 ```bash
 AZURE_SAS_URL='https://gentlyinterview.blob.core.windows.net/?sv=...&sig=...'
 ```
 
-**Keep the quotes.** Without them the shell splits on the `&` characters and the value silently
-truncates. That's the single most common setup problem here.
+```bash
+pnpm check   # 4x PASS, then "All good."
+pnpm dev     # api :8787, web :3000
+```
 
-`AZURE_SAS_URL` is the only value you need to set — everything else in `.env.example` is already
-correct.
+The web app proxies `/api/*` to the API, so there's no CORS setup. Also `pnpm dev:api`,
+`pnpm dev:web`, `pnpm typecheck`, `pnpm build`.
 
-## Check it works
+If `pnpm check` says `FAIL`, tell us **before** the session — usually an expired SAS or the quoting
+above. If a port is taken the API says so and exits; set `PORT` in `.env.local` and the web proxy
+follows it.
+
+<details>
+<summary><b>Node 22+ or pnpm missing?</b></summary>
+
+`pnpm install` and `pnpm dev` check your Node version first and print these same commands, so you
+can also just run one and follow what it tells you.
 
 ```bash
-pnpm check
+node -v && pnpm -v      # want Node v22.x or newer
 ```
 
-You want:
-
-```
-PASS  sqlite opens
-PASS  division-a — 63 files
-PASS  division-b — 60 files
-PASS  division-c — 60 files
-
-All good.
-```
-
-If anything says `FAIL`, tell us **before** the session rather than spending interview time on it.
-The usual causes are an expired SAS or the quoting problem above.
-
-## Run it
+If you have a version manager:
 
 ```bash
-pnpm dev
+nvm install 22 && nvm use 22          # or: fnm install 22 && fnm use 22
 ```
 
-Runs both together:
+If you don't, install one, **reopen your terminal**, then run the above:
 
-- **API** — `http://localhost:8787`, try `http://localhost:8787/api/health`
-- **Web** — `http://localhost:3000` (Vite picks the next free port if 3000 is taken — watch the
-  startup output)
+| Platform | Command |
+| --- | --- |
+| macOS / Linux | `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh \| bash` |
+| Windows | `winget install CoreyButler.NVMforWindows` |
 
-The frontend proxies `/api/*` to the backend, so you can `fetch("/api/whatever")` from React
-without any CORS setup.
+Or skip the version manager and install Node directly — `brew install node@22` on macOS,
+`winget install OpenJS.NodeJS.LTS` on Windows, or the LTS installer from
+[nodejs.org](https://nodejs.org). Missing pnpm: `npm i -g pnpm`.
 
-If a port is already taken: the API will tell you and exit — set `PORT` in `.env.local` (the Vite
-proxy follows it automatically). Vite just moves to the next free port and prints where it landed.
+Sort this out before the session, not during it.
 
-Run them separately if you prefer:
+</details>
 
-```bash
-pnpm dev:api     # backend only, watch mode
-pnpm dev:web     # frontend only
+## The data
+
+Each container is one division. All three hold the same six files, with three nightly snapshots of
+each — **18 files per container**. Names are `<type>_<YYYYMMDDHHMMSS>.TXT`:
+
+```
+transactions_invoice_line_items_20260812040703.TXT
+└─ file type ─────────────────┘ └─ snapshot taken
 ```
 
-Other scripts: `pnpm typecheck`, `pnpm build`.
+Every file is tab-delimited with no header row. Working out what the columns mean is part of the
+exercise, so the descriptions below are deliberately one-liners.
+
+| File | Cols | What it is |
+| --- | --- | --- |
+| `transactions_invoice_line_items_*` | 123 | A row per invoice line, with the prices it was sold at. **The claim lines — start here.** |
+| `order_lines_*` | 38 | A row per order line. Easily the biggest file, up to ~75 MB. |
+| `supplier_invoices_*` | 50 | A row per supplier invoice line — what we owe a supplier. |
+| `products_*` | 68 | A row per item: descriptions, costs, unit of measure. |
+| `customers_*` | 18 | A row per customer: number, name, address. |
+| `suppliers_*` | 10 | A row per supplier: number, name, address. |
+
+The division is the container, not the filename — `suppliers` in particular has no division column
+in its rows.
 
 ## What's here
 
