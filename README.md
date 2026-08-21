@@ -79,7 +79,7 @@ Every file is tab-delimited with no header row. Column names, in file order, are
 | --- | --- | --- |
 | `transactions_invoice_line_items_*` | 123 | A row per line we invoiced **to a customer**, with the price it sold at against list. **The claims live here — start here.** |
 | `supplier_invoices_*` | 50 | A row per line a **supplier invoiced us** — what we owe them. Amount, PO number, goods receipt, due date, terms. |
-| `order_lines_*` | 38 | A row per sales order line, recording **which supplier and purchase order filled it**, plus cost overrides. No prices or quantities. Easily the biggest file, up to ~75 MB. |
+| `order_line_sourcing_*` | 38 | A row per sales order line, recording **which supplier and purchase order filled it**, plus cost overrides. No prices or quantities. Easily the biggest file, up to ~75 MB. |
 | `products_*` | 68 | A row per item: descriptions, costs, unit of measure. |
 | `customers_*` | 18 | A row per customer: number, name, address. |
 | `suppliers_*` | 10 | A row per supplier: number, name, address. |

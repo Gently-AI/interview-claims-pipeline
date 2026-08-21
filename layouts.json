@@ -131,7 +131,7 @@
       "invoice_time_agreement_no"
     ]
   },
-  "order_lines": {
+  "order_line_sourcing": {
     "columns": [
       "order_company",
       "order_division",
