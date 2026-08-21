@@ -72,8 +72,8 @@ transactions_invoice_line_items_20260812040703.TXT
 └─ file type ─────────────────┘ └─ snapshot taken
 ```
 
-Every file is tab-delimited with no header row. Working out what the columns mean is part of the
-exercise, so the descriptions below are deliberately one-liners.
+Every file is tab-delimited with no header row. Column names, in file order, are in
+[`layouts.json`](layouts.json) at the repo root — read that before writing a parser.
 
 | File | Cols | What it is |
 | --- | --- | --- |
@@ -96,6 +96,8 @@ src/db.ts              SQLite connection
 src/server.ts          Express app with /api/health — add your endpoints here
 src/scripts/check.ts   what `pnpm check` runs
 web/src/App.tsx        React entry point — build your UI here
+layouts.json           column names for the six data files
+AGENTS.md              repo context for coding agents (CLAUDE.md symlinks to it)
 ```
 
 There's no ingest, no schema and no parsing. That's the exercise.
