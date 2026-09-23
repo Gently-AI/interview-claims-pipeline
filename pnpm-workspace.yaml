@@ -1,7 +1,15 @@
 packages:
   - .
 
-# These ship prebuilt binaries and need their install scripts to run.
+# esbuild fetches its platform binary in a postinstall, so its build must run.
+#
+# better-sqlite3 is false on purpose. It ships N-API prebuilds (prebuilds/*.node,
+# ABI-independent) and declares no install script — but it does ship binding.gyp,
+# and pnpm falls back to an implicit `node-gyp rebuild` for any package that has
+# one. That compile needs a C++ toolchain and python3: it passes silently on
+# macOS, and fails on a stock Ubuntu box with
+# `better-sqlite3 install: node-gyp rebuild exited with status 1`.
+# Skipping it uses the prebuilt binary instead, which is what we want everywhere.
 allowBuilds:
   esbuild: true
-  better-sqlite3: true
+  better-sqlite3: false
