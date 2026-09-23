@@ -62,6 +62,45 @@ Sort this out before the session, not during it.
 
 </details>
 
+<details>
+<summary><b>On Ubuntu, Debian or WSL? Read this</b></summary>
+
+**Don't `apt install nodejs`.** Ubuntu's own package is far too old on every current LTS — Node 12
+on 22.04, Node 18 on 24.04 — so `pnpm install` will refuse to run. Use one of these instead.
+
+**nvm — recommended, and the only route that needs no `sudo` afterwards:**
+
+```bash
+sudo apt update && sudo apt install -y curl   # minimal and WSL images often ship without curl
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+exec $SHELL -l                                # picks up nvm without closing the terminal
+nvm install 22 && nvm use 22
+corepack enable                               # gives you pnpm, no sudo
+```
+
+**NodeSource — system-wide, if you'd rather not use a version manager:**
+
+```bash
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+sudo apt install -y nodejs
+sudo corepack enable                          # or: sudo npm i -g pnpm
+```
+
+If something goes wrong, it's almost certainly one of these four:
+
+| Symptom | Cause and fix |
+| --- | --- |
+| `nvm: command not found`, right after installing it | The installer appends to `~/.bashrc`, which your current shell already read. Run `exec $SHELL -l`, or open a new terminal. Much the most common one. |
+| `EACCES` on `npm i -g pnpm` | apt- and NodeSource-installed Node put global packages in a root-owned directory. Prefix with `sudo`, or use nvm, where it doesn't happen. |
+| `better-sqlite3 install: node-gyp rebuild exited with status 1` | You're on an old clone — `git pull`. The repo no longer builds this package from source; it uses a prebuilt binary that needs no compiler. If you still see it after pulling, `sudo apt install -y build-essential python3` will get you past it. |
+| Node reverts to an old version after `nvm use` | A snap- or apt-installed Node is shadowing it. Check with `which -a node`; if something under `/snap` or `/usr/bin` wins, remove it or put the nvm shim first on `PATH`. |
+
+**On WSL, clone into your Linux home directory** (`~/`), not `/mnt/c/...`. Writing `node_modules`
+onto the Windows filesystem through the translation layer is slow enough to cost you several
+minutes on its own.
+
+</details>
+
 ## The data
 
 Each container is one division. All three hold the same six files, with three nightly snapshots of
